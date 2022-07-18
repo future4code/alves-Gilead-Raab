@@ -19,7 +19,6 @@ export default function Matches(props) {
     .catch((err) => alert(err.response))
   })
 
-  console.log(matches)
   const showMatches = matches.map(match => {
     return <ProfileContainer><ProfileImage src= {match.photo}height='70vh' width='70vw'/>{match.name}</ProfileContainer>
   })

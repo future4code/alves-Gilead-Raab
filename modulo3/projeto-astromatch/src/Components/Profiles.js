@@ -23,6 +23,7 @@ export default function Profiles(props) {
     .catch((err) => alert(err.response))
   })
 
+  //Verify compatibility between user and profile displayed
   const choosePerson = ((userChoice) => {
     const match = {
       id: profile.id,
@@ -37,6 +38,8 @@ export default function Profiles(props) {
     })
     .catch((err) => alert(err.response))
   })
+
+  //Reset profiles
 
   const resetProfiles = (() => {
     axios
