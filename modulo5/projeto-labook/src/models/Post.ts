@@ -10,6 +10,38 @@ export interface ILikeDB {
     user_id: string
 }
 
+export interface IPostInputDTO {
+    contentInput: string,
+    tokenInput: string
+}
+
+export interface IGetPostsDBDTO {
+    search: string,
+    order: string,
+    sort: string,
+    limit: number,
+    offset: number
+}
+
+export interface IGetPostsInputDTO {
+    token: string,
+    search: string,
+    order: string,
+    sort: string,
+    limit: string,
+    page: string
+}
+
+export interface IGetPostsPost {
+    id: string,
+    content: string,
+    likes: number
+}
+
+export interface IGetPostsOutputDTO {
+    posts: IGetPostsPost[]
+}
+
 export class Post {
     constructor(
         private id: string,

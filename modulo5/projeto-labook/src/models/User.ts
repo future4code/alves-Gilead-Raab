@@ -11,13 +11,24 @@ export interface IUserDB {
     role: USER_ROLES
 }
 
+export interface ISignupInputDTO {
+    name: string,
+    email: string,
+    password: string
+}
+
+export interface ILoginInputDTO {
+    email: string,
+    password: string
+}
+
 export class User {
     constructor(
         private id: string,
         private name: string,
         private email: string,
         private password: string,
-        private role: USER_ROLES
+        private role: USER_ROLES = USER_ROLES.NORMAL
     ) {}
 
     public getId = () => {
