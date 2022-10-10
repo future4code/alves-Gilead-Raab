@@ -59,24 +59,24 @@ export class ProductDatabase extends BaseDatabase {
 
 
 
-    // public getPizzas = async (): Promise<IPizzaDB[]> => {
-    //     const result: IPizzaDB[] = await BaseDatabase
-    //         .connection(PizzaDatabase.TAhBLE_PIZZAS)
-    //         .select()
+    public getProducts = async (): Promise<IProductDB[]> => {
+        const result: IProductDB[] = await BaseDatabase
+            .connection(ProductDatabase.TABLE_PRODUCTS)
+            .select()
 
-    //     return result
-    // }
+        return result
+    }
 
-    // public getIngredients = async (pizzaName: string): Promise<string[]> => {
-    //     const result: IPizzasIngredientsDB[] = await BaseDatabase
-    //         .connection(PizzaDatabase.TABLE_PIZZAS_INGREDIENTS)
-    //         .select("ingredient_name")
-    //         .where({ pizza_name: pizzaName })
+    public getTags = async (productId: number): Promise<string[]> => {
+        const result: IProductTagDB[] = await BaseDatabase
+            .connection(ProductDatabase.TABLE_PRODUCTS_TAGS)
+            .select("product_tag")
+            .where({ product_id: productId })
 
-    //     return result.map(item => item.ingredient_name)
-    // }
+        return result.map(item => item.product_tag)
+    }
 
-    // public getPizzasFormatted = async (): Promise<any> => {
+    // public getProductsFormatted = async (): Promise<any> => {
     //     const [result] = await BaseDatabase
     //         .connection.raw(`
     //             SELECT * FROM Amb_Pizzas

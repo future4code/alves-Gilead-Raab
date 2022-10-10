@@ -49,10 +49,9 @@ export class Product {
 }
 
 export interface IGetProductsOutputDTO {
-    message: string,
     products: {
-        id: string,
-        name: number,
+        id: number,
+        name: string,
         tags: string[]
     }[]
 }

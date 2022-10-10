@@ -13,5 +13,5 @@ const productController = new ProductController(
 
 productRouter.post("/new", productController.addProduct)
 
-//showRouter.get("/", showController.getshows)
+productRouter.get("/", productController.getProducts)
 
