@@ -3,11 +3,11 @@ export interface IProductDB {
     name: string
 }
 
-export interface ITagsDB {
+export interface ITagDB {
     tag_name: string
 }
 
-export interface IProductsTagsDB {
+export interface IProductTagDB {
     product_id: number,
     product_tag: string
 }

@@ -1,4 +1,4 @@
-import { IProductDB, IProductsTagsDB, ITagsDB, Product } from "../models/Products"
+import { IProductDB, IProductTagDB, ITagDB, Product } from "../models/Products"
 import { BaseDatabase } from "./BaseDatabase"
 
 export class ProductDatabase extends BaseDatabase {
@@ -15,6 +15,15 @@ export class ProductDatabase extends BaseDatabase {
         return productDB    
     }
 
+    public toProductTagDBModel = (productId: number, tag: string): IProductTagDB => {
+        const productTagDB: IProductTagDB = {
+            product_id: productId,
+            product_tag: tag
+        }
+
+        return productTagDB    
+    }
+
 
     public addProduct = async (product: Product): Promise<void> => {
         const productDB = this.toProductDBModel(product)
@@ -22,6 +31,30 @@ export class ProductDatabase extends BaseDatabase {
         await BaseDatabase
             .connection(ProductDatabase.TABLE_PRODUCTS)
             .insert(productDB)
+    }
+
+    public searchByTag = async (tag: string): Promise<ITagDB | undefined> =>  {
+        const tagDB: ITagDB[] = await BaseDatabase
+            .connection(ProductDatabase.TABLE_TAGS)
+            .select()
+            .where({ tag_name: tag })
+
+        return tagDB[0]
+    }
+
+    public addTag = async (tag: string): Promise<void> => {
+
+        await BaseDatabase
+            .connection(ProductDatabase.TABLE_TAGS)
+            .insert({tag_name: tag})
+    }
+
+    public addProductTags = async (productId: number, tag: string): Promise<void> => {
+        const productTagDB = this.toProductTagDBModel(productId, tag)
+
+        await BaseDatabase
+        .connection(ProductDatabase.TABLE_PRODUCTS_TAGS)
+        .insert(productTagDB)
     }
 
 

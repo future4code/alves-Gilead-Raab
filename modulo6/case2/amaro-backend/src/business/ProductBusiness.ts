@@ -1,5 +1,5 @@
 import { ProductDatabase } from "../database/ProductDatabase"
-import { IAddProductsInputDTO, Product } from "../models/Products"
+import { IAddProductsInputDTO, ITagDB, Product } from "../models/Products"
 
 
 export class ProductBusiness {
@@ -16,6 +16,16 @@ export class ProductBusiness {
             )
 
             await this.productDatabase.addProduct(product)
+
+            for (const tag of item.tags) {
+                const doesTagAlreadyExist: ITagDB | undefined = await this.productDatabase.searchByTag(tag)
+                
+                if (!doesTagAlreadyExist) {
+                    await this.productDatabase.addTag(tag)
+                }
+
+                await this.productDatabase.addProductTags(item.id, tag)
+            }
         }
 
         const response = {
