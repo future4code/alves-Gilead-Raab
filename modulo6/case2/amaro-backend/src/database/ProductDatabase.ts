@@ -1,4 +1,4 @@
-import { IProductDB, IProductTagDB, ITagDB, Product } from "../models/Products"
+import { IGetProductsDBDTO, IGetProductsFormattedDBDTO, IProductDB, IProductTagDB, ITagDB, Product } from "../models/Products"
 import { BaseDatabase } from "./BaseDatabase"
 
 export class ProductDatabase extends BaseDatabase {
@@ -58,7 +58,6 @@ export class ProductDatabase extends BaseDatabase {
     }
 
 
-
     public getProducts = async (): Promise<IProductDB[]> => {
         const result: IProductDB[] = await BaseDatabase
             .connection(ProductDatabase.TABLE_PRODUCTS)
@@ -76,12 +75,21 @@ export class ProductDatabase extends BaseDatabase {
         return result.map(item => item.product_tag)
     }
 
-    // public getProductsFormatted = async (): Promise<any> => {
-    //     const [result] = await BaseDatabase
-    //         .connection.raw(`
-    //             SELECT * FROM Amb_Pizzas
-    //             JOIN Amb_Pizzas_Ingredients ON Amb_Pizzas_Ingredients.pizza_name = Amb_Pizzas.name;
-    //         `)
+    public getProductsFormatted = async (input: IGetProductsDBDTO): Promise<IGetProductsFormattedDBDTO[]> => {
+        const search = input.search
+        const order = input.order
+        const sort = input.sort
 
-    //     return result
+        const result = await BaseDatabase
+            .connection.raw(`
+                SELECT * FROM Amaro_Products
+                JOIN Amaro_Products_Tags ON Amaro_Products_Tags.product_id = Amaro_Products.id
+                WHERE name LIKE '%${search}%'
+                OR product_id LIKE '%${search}%'
+                OR product_tag LIKE '%${search}%'
+                ORDER BY ${order} ${sort}
+            `)  
+
+        return result[0]
+    }
 }

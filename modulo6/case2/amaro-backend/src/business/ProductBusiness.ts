@@ -1,5 +1,7 @@
 import { ProductDatabase } from "../database/ProductDatabase"
-import { IAddProductsInputDTO, IGetProductsOutputDTO, ITagDB, Product } from "../models/Products"
+import { NotFoundError } from "../errors/NotFoundError"
+import { UnprocessableError } from "../errors/UnprocessableError"
+import { IAddProductsInputDTO, IGetProductsDBDTO, IGetProductsFormattedDBDTO, IGetProductsInputDTO, IGetProductsOutputDTO, ITagDB, Product } from "../models/Products"
 
 
 export class ProductBusiness {
@@ -36,8 +38,9 @@ export class ProductBusiness {
     }
 
     public getProducts = async (): Promise<IGetProductsOutputDTO> => {
-
+ 
         const productsDB = await this.productDatabase.getProducts()
+        console.log(productsDB)
 
         const products: Product[] = []
 
@@ -67,4 +70,53 @@ export class ProductBusiness {
         return response
     }
 
+
+    public getProductsV2 = async (input: IGetProductsInputDTO): Promise<IGetProductsOutputDTO> => {
+        const search = input.search || ""
+        const order = input.order || "id"
+        const sort = input.sort || "ASC"
+
+
+        const getProductsInputDB: IGetProductsDBDTO = {
+            search,
+            order,
+            sort
+        }
+ 
+        const rawProductsFormatted: IGetProductsFormattedDBDTO[] = await this.productDatabase.getProductsFormatted(getProductsInputDB)
+
+        const products: Product[] = []
+
+        for (let rawProduct of rawProductsFormatted) {
+            const productAlreadyOnArray = products
+                .find((product: Product) => product.getId() === rawProduct.id)
+
+            if (productAlreadyOnArray) {
+                productAlreadyOnArray.getTags().push(rawProduct.product_tag)
+            } else {
+                const product = new Product (
+                    rawProduct.id,
+                    rawProduct.name,
+                    [ rawProduct.product_tag ]
+                )
+
+                products.push(product)
+            }
+        }
+
+        const response: IGetProductsOutputDTO = {
+            products: products.map((product) => ({
+                id: product.getId(),
+                name: product.getName(),
+                tags: product.getTags()
+            }))
+        }
+
+        if (response.products.length <= 0){
+            throw new NotFoundError("Nenhum produto encontrado")
+        }
+
+        return response
+        
+    }
 }

@@ -48,6 +48,19 @@ export class Product {
     }
 }
 
+export interface IAddProductsInputDTO {
+    id: number,
+    name: string,
+    tags: string[]
+}
+
+
+export interface IGetProductsInputDTO {
+    search: string,
+    order: string,
+    sort: string,
+}
+
 export interface IGetProductsOutputDTO {
     products: {
         id: number,
@@ -56,8 +69,15 @@ export interface IGetProductsOutputDTO {
     }[]
 }
 
-export interface IAddProductsInputDTO {
+export interface IGetProductsFormattedDBDTO {
     id: number,
     name: string,
-    tags: string[]
+    product_id: number,
+    product_tag: string
+}
+
+export interface IGetProductsDBDTO {
+    search: string,
+    order: string,
+    sort: string
 }

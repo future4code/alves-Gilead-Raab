@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ProductBusiness } from "../business/ProductBusiness";
 import { BaseError } from "../errors/BaseError";
-import { IAddProductsInputDTO, Product } from "../models/Products";
+import { IAddProductsInputDTO, IGetProductsInputDTO, Product } from "../models/Products";
 
 export class ProductController {
     constructor(
@@ -26,7 +26,15 @@ export class ProductController {
 
     public getProducts = async (req: Request, res: Response) => {
         try {
-            const response = await this.productBusiness.getProducts()
+
+            const input: IGetProductsInputDTO = {
+                search: req.query.search as string,
+                order: req.query.order as string,
+                sort: req.query.sort as string,
+            }
+
+
+            const response = await this.productBusiness.getProductsV2(input)
 
             res.status(201).send(response)
 
