@@ -5,22 +5,12 @@ export class PokemonDatabase extends BaseDatabase {
     public static TABLE_POKEMONS = "Pokemons"
 
 
-    public toProductDBModel = (product: Pokemon) => {
-        // const pokemonDB: IPokemonDB = {
-        //     id: pokemon.getId(),
-        //     name: pokemon.getName()
-        // }
 
-        // return pokemonDB    
-    }
-
-
-    public addPokemons = async (pokemon: Pokemon): Promise<void> => {
-        const productDB = this.toProductDBModel(pokemon)
-
+    public insertPokemon = async (pokemon: IPokemonDB): Promise<void> => {
+        console.log(pokemon)
         await BaseDatabase
             .connection(PokemonDatabase.TABLE_POKEMONS)
-            .insert(productDB)
+            .insert(pokemon)
     }
 
 

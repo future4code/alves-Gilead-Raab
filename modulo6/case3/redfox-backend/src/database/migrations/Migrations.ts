@@ -27,9 +27,9 @@ class Migrations extends BaseDatabase {
 
 
         CREATE TABLE IF NOT EXISTS ${PokemonDatabase.TABLE_POKEMONS} (
-            id TINYINT PRIMARY KEY,
+            id SMALLINT PRIMARY KEY,
             name VARCHAR(255),
-            Pokedex_Number TINYINT ,
+            Pokedex_Number SMALLINT ,
             Img_name TINYINT ,
             Generation TINYINT,
             Evolution_Stage TINYINT,
@@ -40,7 +40,7 @@ class Migrations extends BaseDatabase {
             Type_2 VARCHAR(255),
             Weather_1 VARCHAR(255),
             Weather_2 VARCHAR(255),
-            STAT_TOTAL TINYINT,
+            STAT_TOTAL SMALLINT,
             ATK TINYINT,
             DEF TINYINT,
             STA TINYINT,
@@ -55,8 +55,8 @@ class Migrations extends BaseDatabase {
             New TINYINT,
             Not_Gettable TINYINT,
             Future_Evolve TINYINT,
-            MAX_CP_LVL_40 SMALLINT,
-            MAX_CP_LVL_39 SMALLINT
+            MAX_CP_LVL_40 INT,
+            MAX_CP_LVL_39 INT
         );
 
         `)

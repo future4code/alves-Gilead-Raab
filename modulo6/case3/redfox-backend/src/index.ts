@@ -3,7 +3,7 @@ import cors from 'cors'
 import dotenv from "dotenv"
 import { pingRouter } from './router/pingRouter'
 import { pokemonRouter } from './router/PokemonRouter'
-import { pokemons } from  './conversion/SheetConversor'
+
 
 dotenv.config()
 
@@ -17,7 +17,5 @@ app.listen(process.env.PORT || 3003, () => {
 
 app.use("/ping", pingRouter)
 app.use("/pokemons", pokemonRouter)
-
-console.log(pokemons)
 
 
