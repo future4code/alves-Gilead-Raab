@@ -58,38 +58,19 @@ export class ProductDatabase extends BaseDatabase {
     }
 
 
-    public getProducts = async (): Promise<IProductDB[]> => {
-        const result: IProductDB[] = await BaseDatabase
-            .connection(ProductDatabase.TABLE_PRODUCTS)
-            .select()
-
-        return result
-    }
-
-    public getTags = async (productId: number): Promise<string[]> => {
-        const result: IProductTagDB[] = await BaseDatabase
-            .connection(ProductDatabase.TABLE_PRODUCTS_TAGS)
-            .select("product_tag")
-            .where({ product_id: productId })
-
-        return result.map(item => item.product_tag)
-    }
-
     public getProductsFormatted = async (input: IGetProductsDBDTO): Promise<IGetProductsFormattedDBDTO[]> => {
         const search = input.search
         const order = input.order
         const sort = input.sort
 
-        const result = await BaseDatabase
-            .connection.raw(`
-                SELECT * FROM Amaro_Products
-                JOIN Amaro_Products_Tags ON Amaro_Products_Tags.product_id = Amaro_Products.id
-                WHERE name LIKE '%${search}%'
-                OR product_id LIKE '%${search}%'
-                OR product_tag LIKE '%${search}%'
-                ORDER BY ${order} ${sort}
-            `)  
+        const result: IGetProductsFormattedDBDTO[] = await BaseDatabase
+            .connection(ProductDatabase.TABLE_PRODUCTS)
+            .orderBy(order, sort)
+            .join(ProductDatabase.TABLE_PRODUCTS_TAGS, `${ProductDatabase.TABLE_PRODUCTS_TAGS}.product_id`,  `${ProductDatabase.TABLE_PRODUCTS}.id`) 
+            .where(`name`, `LIKE`, `%${search}%`) 
+            .orWhere(`product_id`, `LIKE`, `%${search}%`) 
+            .orWhere(`product_tag`, `LIKE`, `%${search}%`)
 
-        return result[0]
+        return result
     }
 }

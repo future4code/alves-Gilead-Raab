@@ -33,8 +33,7 @@ export class ProductController {
                 sort: req.query.sort as string,
             }
 
-
-            const response = await this.productBusiness.getProductsV2(input)
+            const response = await this.productBusiness.getProducts(input)
 
             res.status(201).send(response)
 
