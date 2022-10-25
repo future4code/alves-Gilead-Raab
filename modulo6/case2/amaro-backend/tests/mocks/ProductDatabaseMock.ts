@@ -1,7 +1,7 @@
-import { IGetProductDBDTO, IGetProductFormattedDBDTO, IProductDB, IProductTagDB, ITagDB, Product } from "../models/Products"
-import { BaseDatabase } from "./BaseDatabase"
+import { IGetProductDBDTO, IGetProductFormattedDBDTO, IProductDB, IProductTagDB, ITagDB, Product } from "../../src/models/Products"
+import { BaseDatabase } from "../../src/database/BaseDatabase"
 
-export class ProductDatabase extends BaseDatabase {
+export class ProductDatabaseMock extends BaseDatabase {
     public static TABLE_PRODUCTS = "Amaro_Products"
     public static TABLE_TAGS = "Amaro_Tags"
     public static TABLE_PRODUCTS_TAGS = "Amaro_Products_Tags"
@@ -28,13 +28,13 @@ export class ProductDatabase extends BaseDatabase {
         const productDB = this.toProductDBModel(product)
 
         await BaseDatabase
-            .connection(ProductDatabase.TABLE_PRODUCTS)
+            .connection(ProductDatabaseMock.TABLE_PRODUCTS)
             .insert(productDB)
     }
 
     public searchById = async (id: number): Promise<IProductDB | undefined> =>  {
         const productDB: IProductDB[] = await BaseDatabase
-            .connection(ProductDatabase.TABLE_PRODUCTS)
+            .connection(ProductDatabaseMock.TABLE_PRODUCTS)
             .select()
             .where({ id: id })
 
@@ -43,7 +43,7 @@ export class ProductDatabase extends BaseDatabase {
 
     public searchByTag = async (tag: string): Promise<ITagDB | undefined> =>  {
         const tagDB: ITagDB[] = await BaseDatabase
-            .connection(ProductDatabase.TABLE_TAGS)
+            .connection(ProductDatabaseMock.TABLE_TAGS)
             .select()
             .where({ tag_name: tag })
 
@@ -53,7 +53,7 @@ export class ProductDatabase extends BaseDatabase {
     public addTag = async (tag: string): Promise<void> => {
 
         await BaseDatabase
-            .connection(ProductDatabase.TABLE_TAGS)
+            .connection(ProductDatabaseMock.TABLE_TAGS)
             .insert({tag_name: tag})
     }
 
@@ -61,7 +61,7 @@ export class ProductDatabase extends BaseDatabase {
         const productTagDB = this.toProductTagDBModel(productId, tag)
 
         await BaseDatabase
-        .connection(ProductDatabase.TABLE_PRODUCTS_TAGS)
+        .connection(ProductDatabaseMock.TABLE_PRODUCTS_TAGS)
         .insert(productTagDB)
     }
 
@@ -72,9 +72,9 @@ export class ProductDatabase extends BaseDatabase {
         const sort = input.sort
 
         const result: IGetProductFormattedDBDTO[] = await BaseDatabase
-            .connection(ProductDatabase.TABLE_PRODUCTS)
+            .connection(ProductDatabaseMock.TABLE_PRODUCTS)
             .orderBy(order, sort)
-            .join(ProductDatabase.TABLE_PRODUCTS_TAGS, `${ProductDatabase.TABLE_PRODUCTS_TAGS}.product_id`,  `${ProductDatabase.TABLE_PRODUCTS}.id`) 
+            .join(ProductDatabaseMock.TABLE_PRODUCTS_TAGS, `${ProductDatabaseMock.TABLE_PRODUCTS_TAGS}.product_id`,  `${ProductDatabaseMock.TABLE_PRODUCTS}.id`) 
             .where(`name`, `LIKE`, `%${search}%`) 
             .orWhere(`product_id`, `LIKE`, `%${search}%`) 
             .orWhere(`product_tag`, `LIKE`, `%${search}%`)

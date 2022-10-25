@@ -4,6 +4,9 @@ import dotenv from "dotenv"
 import { pingRouter } from './router/pingRouter'
 import { productRouter } from './router/ProductRouter'
 
+//import { productsRaw } from './conversion/xml2json'
+import { convertToJson } from './conversion/xml2json'
+
 dotenv.config()
 
 const app = express()
@@ -16,5 +19,9 @@ app.listen(process.env.PORT || 3003, () => {
 
 app.use("/ping", pingRouter)
 app.use("/products", productRouter)
+
+
+convertToJson()
+
 
 

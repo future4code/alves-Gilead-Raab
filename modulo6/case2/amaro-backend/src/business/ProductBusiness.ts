@@ -1,7 +1,7 @@
 import { ProductDatabase } from "../database/ProductDatabase"
+import { ConflictError } from "../errors/ConflictError"
 import { NotFoundError } from "../errors/NotFoundError"
-import { UnprocessableError } from "../errors/UnprocessableError"
-import { IAddProductsInputDTO, IGetProductsDBDTO, IGetProductsFormattedDBDTO, IGetProductsInputDTO, IGetProductsOutputDTO, ITagDB, Product } from "../models/Products"
+import { IAddProductInputDTO, IGetProductDBDTO, IGetProductFormattedDBDTO, IGetProductInputDTO, IGetProductOutputDTO, IProductDB, ITagDB, Product } from "../models/Products"
 
 
 export class ProductBusiness {
@@ -9,7 +9,7 @@ export class ProductBusiness {
         private productDatabase: ProductDatabase,
     ) {}
 
-    public addProduct = async (products: IAddProductsInputDTO[]) => {
+    public addProduct = async (products: IAddProductInputDTO[]) => {
         for (const item of products) {
             const product = new Product(
                 item.id,
@@ -17,7 +17,15 @@ export class ProductBusiness {
                 item.tags
             )
 
+            const isProductAlreadyRegistered: IProductDB | undefined = await this.productDatabase.searchById(item.id)
+
+            if (isProductAlreadyRegistered) {
+                throw new ConflictError(`já há um produto cadastrado com a ID ${isProductAlreadyRegistered.id}: ${isProductAlreadyRegistered.name}`)
+            }
+
+
             await this.productDatabase.addProduct(product)
+
 
             for (const tag of item.tags) {
                 const doesTagAlreadyExist: ITagDB | undefined = await this.productDatabase.searchByTag(tag)
@@ -37,19 +45,19 @@ export class ProductBusiness {
         return response
     }
 
-    public getProducts = async (input: IGetProductsInputDTO): Promise<IGetProductsOutputDTO> => {
+    public getProducts = async (input: IGetProductInputDTO): Promise<IGetProductOutputDTO> => {
         const search = input.search || ""
         const order = input.order || "id"
         const sort = input.sort || "ASC"
 
 
-        const getProductsInputDB: IGetProductsDBDTO = {
+        const getProductsInputDB: IGetProductDBDTO = {
             search,
             order,
             sort
         }
  
-        const rawProductsFormatted: IGetProductsFormattedDBDTO[] = await this.productDatabase.getProductsFormatted(getProductsInputDB)
+        const rawProductsFormatted: IGetProductFormattedDBDTO[] = await this.productDatabase.getProductsFormatted(getProductsInputDB)
 
         const products: Product[] = []
 
@@ -70,7 +78,7 @@ export class ProductBusiness {
             }
         }
 
-        const response: IGetProductsOutputDTO = {
+        const response: IGetProductOutputDTO = {
             products: products.map((product) => ({
                 id: product.getId(),
                 name: product.getName(),
