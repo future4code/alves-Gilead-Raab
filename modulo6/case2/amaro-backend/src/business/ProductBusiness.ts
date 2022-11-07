@@ -1,7 +1,7 @@
 import { ProductDatabase } from "../database/ProductDatabase"
 import { ConflictError } from "../errors/ConflictError"
 import { NotFoundError } from "../errors/NotFoundError"
-import { IAddProductInputDTO, IGetProductDBDTO, IGetProductFormattedDBDTO, IGetProductInputDTO, IGetProductOutputDTO, IProductDB, ITagDB, Product } from "../models/Products"
+import { IAddProductInputDTO, IGetProductDBDTO, IGetProductRawDBDTO, IGetProductInputDTO, IGetProductOutputDTO, IProductDB, ITagDB, Product } from "../models/Products"
 
 
 export class ProductBusiness {
@@ -57,13 +57,13 @@ export class ProductBusiness {
             sort
         }
  
-        const rawProductsFormatted: IGetProductFormattedDBDTO[] = await this.productDatabase.getProductsFormatted(getProductsInputDB)
+        const rawProductsFormatted: IGetProductRawDBDTO[] = await this.productDatabase.getProducts(getProductsInputDB)
 
         const products: Product[] = []
 
         for (let rawProduct of rawProductsFormatted) {
-            const productAlreadyOnArray = products
-                .find((product: Product) => product.getId() === rawProduct.id)
+            const productAlreadyOnArray = products.find((product: Product) => product.getId() === rawProduct.id)
+            console.log(rawProduct)
 
             if (productAlreadyOnArray) {
                 productAlreadyOnArray.getTags().push(rawProduct.product_tag)
@@ -73,7 +73,6 @@ export class ProductBusiness {
                     rawProduct.name,
                     [ rawProduct.product_tag ]
                 )
-
                 products.push(product)
             }
         }

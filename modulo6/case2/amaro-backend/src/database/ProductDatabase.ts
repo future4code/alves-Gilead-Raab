@@ -1,4 +1,4 @@
-import { IGetProductDBDTO, IGetProductFormattedDBDTO, IProductDB, IProductTagDB, ITagDB, Product } from "../models/Products"
+import { IGetProductDBDTO, IGetProductRawDBDTO, IProductDB, IProductTagDB, ITagDB, Product } from "../models/Products"
 import { BaseDatabase } from "./BaseDatabase"
 
 export class ProductDatabase extends BaseDatabase {
@@ -66,15 +66,15 @@ export class ProductDatabase extends BaseDatabase {
     }
 
 
-    public getProductsFormatted = async (input: IGetProductDBDTO): Promise<IGetProductFormattedDBDTO[]> => {
+    public getProducts = async (input: IGetProductDBDTO): Promise<IGetProductRawDBDTO[]> => {
         const search = input.search
         const order = input.order
         const sort = input.sort
 
-        const result: IGetProductFormattedDBDTO[] = await BaseDatabase
+        const result: IGetProductRawDBDTO[] = await BaseDatabase
             .connection(ProductDatabase.TABLE_PRODUCTS)
             .orderBy(order, sort)
-            .join(ProductDatabase.TABLE_PRODUCTS_TAGS, `${ProductDatabase.TABLE_PRODUCTS_TAGS}.product_id`,  `${ProductDatabase.TABLE_PRODUCTS}.id`) 
+            .join(ProductDatabase.TABLE_PRODUCTS_TAGS, `${ProductDatabase.TABLE_PRODUCTS_TAGS}.product_id`, `${ProductDatabase.TABLE_PRODUCTS}.id`) 
             .where(`name`, `LIKE`, `%${search}%`) 
             .orWhere(`product_id`, `LIKE`, `%${search}%`) 
             .orWhere(`product_tag`, `LIKE`, `%${search}%`)

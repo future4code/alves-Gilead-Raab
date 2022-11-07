@@ -54,6 +54,14 @@ export interface IAddProductInputDTO {
     tags: string[]
 }
 
+export interface IAddProductXMLInputDTO {
+    id: string[],
+    name: string[],
+    tags: {
+        element: string[]
+    }[]
+}
+
 
 export interface IGetProductInputDTO {
     search: string,
@@ -69,7 +77,7 @@ export interface IGetProductOutputDTO {
     }[]
 }
 
-export interface IGetProductFormattedDBDTO {
+export interface IGetProductRawDBDTO {
     id: number,
     name: string,
     product_id: number,
@@ -81,3 +89,4 @@ export interface IGetProductDBDTO {
     order: string,
     sort: string
 }
+

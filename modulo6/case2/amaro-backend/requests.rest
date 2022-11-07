@@ -1,4 +1,4 @@
-### Endpoint de teste
+a### Endpoint de teste
 GET http://localhost:3003/ping
 
 ###
@@ -134,6 +134,42 @@ Content-Type: application/json
     }
   ]
 }
+
+
+
+###
+<?xml version="1.0" encoding="UTF-8"?>
+
+<products>
+    <element>
+        <id>8371</id>
+        <name>VESTIDO TRICOT CHEVRON</name>
+        <tags>
+            <element>balada</element>
+            <element>neutro</element>
+            <element>delicado</element>
+            <element>festa</element>
+        </tags>
+    </element>
+    <element>
+        <id>8109</id>
+        <name>VESTIDO BABADOS HORIZONTAIS</name>
+        <tags>
+            <element>moderno</element>
+            <element>boho</element>
+            <element>festa</element>
+            <element>descolado</element>
+            <element>colorido</element>
+        </tags>
+    </element>
+</products>
+
+
+
+
+
+
+
 
 ###
 GET http://localhost:3003/products

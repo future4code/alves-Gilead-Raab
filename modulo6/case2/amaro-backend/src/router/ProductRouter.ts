@@ -13,5 +13,7 @@ const productController = new ProductController(
 
 productRouter.post("/new", productController.addProduct)
 
+productRouter.post("/new/xml", productController.addProductXml)
+
 productRouter.get("/", productController.getProducts)
 
