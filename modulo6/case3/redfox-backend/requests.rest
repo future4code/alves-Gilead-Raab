@@ -1,0 +1,10 @@
+### Endpoint de teste
+GET http://localhost:3003/ping
+
+###
+POST http://localhost:3003/pokemons/new
+
+
+###
+GET http://localhost:3003/products
+
