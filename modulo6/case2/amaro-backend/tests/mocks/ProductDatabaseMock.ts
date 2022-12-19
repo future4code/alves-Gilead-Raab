@@ -1,4 +1,4 @@
-import { IGetProductDBDTO, IGetProductFormattedDBDTO, IProductDB, IProductTagDB, ITagDB, Product } from "../../src/models/Products"
+import { IGetProductDBDTO, IGetProductRawDBDTO, IProductDB, IProductTagDB, ITagDB, Product } from "../../src/models/Products"
 import { BaseDatabase } from "../../src/database/BaseDatabase"
 
 export class ProductDatabaseMock extends BaseDatabase {
@@ -24,21 +24,15 @@ export class ProductDatabaseMock extends BaseDatabase {
         return productTagDB    
     }
 
-    public addProduct = async (product: Product): Promise<void> => {
-        const productDB = this.toProductDBModel(product)
-
-        await BaseDatabase
-            .connection(ProductDatabaseMock.TABLE_PRODUCTS)
-            .insert(productDB)
-    }
+    public addProduct = async (product: Product): Promise<void> => {}
 
     public searchById = async (id: number): Promise<IProductDB | undefined> =>  {
-        const productDB: IProductDB[] = await BaseDatabase
-            .connection(ProductDatabaseMock.TABLE_PRODUCTS)
-            .select()
-            .where({ id: id })
-
-        return productDB[0]
+        if (id == 12345678) {
+            return {
+                id: 12345678,
+                name: "Duplicated Product",
+            }
+        }
     }
 
     public searchByTag = async (tag: string): Promise<ITagDB | undefined> =>  {
@@ -50,31 +44,22 @@ export class ProductDatabaseMock extends BaseDatabase {
         return tagDB[0]
     }
 
-    public addTag = async (tag: string): Promise<void> => {
-
-        await BaseDatabase
-            .connection(ProductDatabaseMock.TABLE_TAGS)
-            .insert({tag_name: tag})
-    }
+    public addTag = async (tag: string): Promise<void> => {}
 
     public addProductTags = async (productId: number, tag: string): Promise<void> => {
         const productTagDB = this.toProductTagDBModel(productId, tag)
-
-        await BaseDatabase
-        .connection(ProductDatabaseMock.TABLE_PRODUCTS_TAGS)
-        .insert(productTagDB)
     }
 
 
-    public getProductsFormatted = async (input: IGetProductDBDTO): Promise<IGetProductFormattedDBDTO[]> => {
+    public getProducts = async (input: IGetProductDBDTO): Promise<IGetProductRawDBDTO[]> => {
         const search = input.search
         const order = input.order
         const sort = input.sort
 
-        const result: IGetProductFormattedDBDTO[] = await BaseDatabase
+        const result: IGetProductRawDBDTO[] = await BaseDatabase
             .connection(ProductDatabaseMock.TABLE_PRODUCTS)
             .orderBy(order, sort)
-            .join(ProductDatabaseMock.TABLE_PRODUCTS_TAGS, `${ProductDatabaseMock.TABLE_PRODUCTS_TAGS}.product_id`,  `${ProductDatabaseMock.TABLE_PRODUCTS}.id`) 
+            .join(ProductDatabaseMock.TABLE_PRODUCTS_TAGS, `${ProductDatabaseMock.TABLE_PRODUCTS_TAGS}.product_id`, `${ProductDatabaseMock.TABLE_PRODUCTS}.id`) 
             .where(`name`, `LIKE`, `%${search}%`) 
             .orWhere(`product_id`, `LIKE`, `%${search}%`) 
             .orWhere(`product_tag`, `LIKE`, `%${search}%`)

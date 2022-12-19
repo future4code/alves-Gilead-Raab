@@ -1,6 +1,7 @@
 import { ProductDatabase } from "../database/ProductDatabase"
 import { ConflictError } from "../errors/ConflictError"
 import { NotFoundError } from "../errors/NotFoundError"
+import { ParamsError } from "../errors/ParamsError"
 import { IAddProductInputDTO, IGetProductDBDTO, IGetProductRawDBDTO, IGetProductInputDTO, IGetProductOutputDTO, IProductDB, ITagDB, Product } from "../models/Products"
 
 
@@ -10,6 +11,10 @@ export class ProductBusiness {
     ) {}
 
     public addProduct = async (products: IAddProductInputDTO[]) => {
+        if (products.length < 1) {
+            throw new ParamsError("Parâmetro 'produto' inválido: mínimo de 1 item")
+        }
+
         for (const item of products) {
             const product = new Product(
                 item.id,
@@ -23,6 +28,9 @@ export class ProductBusiness {
                 throw new ConflictError(`já há um produto cadastrado com a ID ${isProductAlreadyRegistered.id}: ${isProductAlreadyRegistered.name}`)
             }
 
+            if (typeof product.getName() !== "string") {
+                throw new ParamsError("Parâmetro inválido. 'Name' deve ser uma string")
+            }
 
             await this.productDatabase.addProduct(product)
 
@@ -63,7 +71,6 @@ export class ProductBusiness {
 
         for (let rawProduct of rawProductsFormatted) {
             const productAlreadyOnArray = products.find((product: Product) => product.getId() === rawProduct.id)
-            console.log(rawProduct)
 
             if (productAlreadyOnArray) {
                 productAlreadyOnArray.getTags().push(rawProduct.product_tag)

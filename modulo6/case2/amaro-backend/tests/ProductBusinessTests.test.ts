@@ -1,108 +1,87 @@
 import { ProductBusiness } from "../src/business/ProductBusiness"
 import { BaseError } from "../src/errors/BaseError"
 import { ProductDatabaseMock } from "./mocks/ProductDatabaseMock"
-import { IAddProductInputDTO, IGetProductDBDTO, IGetProductFormattedDBDTO, IGetProductInputDTO, IGetProductOutputDTO, IProductDB, ITagDB, Product } from "../src/models/Products"
+import { IAddProductInputDTO, IGetProductDBDTO, IGetProductRawDBDTO, IGetProductInputDTO, IGetProductOutputDTO, IProductDB, ITagDB, Product } from "../src/models/Products"
 
 
-// describe("Testando a ProductBusiness", () => {
-//     const productBusines = new ProductBusiness(
-//         new ProductDatabaseMock()
-//     )
+describe("Testando a ProductBusiness", () => {
+    const productBusiness = new ProductBusiness(
+        new ProductDatabaseMock()
+    )
 
-//     test("Deve ser possível criar um novo produto", async () => {
-//         const input: IAddProductInputDTO = {
-//             id: number,
-//             name: string,
-//             tags: string[]
-//         }
+    test("Deve ser possível criar um novo produto", async () => {
+        const input: IAddProductInputDTO[] = [
+          {
+            id: 123456,
+            name: "New Product Test",
+            tags: ["tag-test-1", "tag-test-2"]
+          },
+          {
+            id: 1234567,
+            name: "New Product Test 2",
+            tags: ["tag-test-3", "tag-test-4"]
+          },  
+        ]
+        const response = await productBusiness.addProduct(input)
 
-//         const response = await postBusiness.createPost(input)
+        expect(response.message).toBe("Produtos adicionados com sucesso")
+    })
 
-//         expect(response.message).toBe("Post criado com sucesso")
-//         expect(response.post).toBeInstanceOf(Post)
-//         expect(response.post.getId()).toBe("id-mock")
-//         expect(response.post.getContent()).toBe("Teste do mock")
-//         expect(response.post.getLikes()).toBe(0)
-//         expect(response.post.getUserId()).toBe("id-mock")
-//     })
+    test("Erro na criação de post quando já houver um produto com a mesma id", async () => {
+        expect.assertions(2)
 
-//     //ERROS CREATE POST
-//     test("Erro na criação de post quando não for fornecido um token válido na autenticação", async () => {
-//         expect.assertions(2)
+        try {
+            const input: IAddProductInputDTO[] = [{
+              id: 12345678,
+              name: "Duplicated Product",
+              tags: ["tag-test-3", "tag-test-4"]
+            }]
 
-//         try {
-//             const input: ICreatePostInputDTO = {
-//                 token: "token-invalido",
-//                 content: "bananinha123"
-//             }
+            await productBusiness.addProduct(input)
 
-//             await postBusiness.createPost(input)
+        } catch (error) {
+            if (error instanceof BaseError) {
+                expect(error.statusCode).toBe(409)
+                expect(error.message).toBe(`já há um produto cadastrado com a ID 12345678: Duplicated Product`)
+            }
+        }
+    })
 
-//         } catch (error) {
-//             if (error instanceof BaseError) {
-//                 expect(error.statusCode).toBe(401)
-//                 expect(error.message).toBe("Credenciais inválidas")
-//             }
-//         }
-//     })
+    test("Erro no na criação quando 'name' for diferente do tipo string", async () => {
+        expect.assertions(2)
 
-//     test("Erro no na criação quando 'content' for diferente do tipo string", async () => {
-//         expect.assertions(2)
+        try {
+            const input = [{
+              id: 12348,
+              name: 5615613,
+              tags: ["tag-test-3", "tag-test-4"]
+            }] as any
 
-//         try {
-//             const input = {
-//                 token: "token-mock-normal",
-//                 content: 123456
-//             } as any
+            await productBusiness.addProduct(input)
 
-//             await postBusiness.createPost(input)
+        } catch (error) {
+            if (error instanceof BaseError) {
+                console.log(error.message)
+                expect(error.statusCode).toBe(409)
+                expect(error.message).toBe("Parâmetro inválido. 'Name' deve ser uma string")
+            }
+        }
+    })
 
-//         } catch (error) {
-//             if (error instanceof BaseError) {
-//                 expect(error.statusCode).toBe(400)
-//                 expect(error.message).toBe("Parâmetro 'content' inválido")
-//             }
-//         }
-//     })
+    test("Erro no na criação ao tentar inserir um array vazio", async () => {
+        expect.assertions(2)
 
-//     test("Erro no na criação quando 'content' nao possuir conteudo", async () => {
-//         expect.assertions(2)
+        try {
+            const input: IAddProductInputDTO[] = []
 
-//         try {
-//             const input: ICreatePostInputDTO = {
-//                 token: "token-mock-normal",
-//                 content: ""
-//             }
+            await productBusiness.addProduct(input)
 
-//             await postBusiness.createPost(input)
-
-//         } catch (error) {
-//             if (error instanceof BaseError) {
-//                 expect(error.statusCode).toBe(400)
-//                 expect(error.message).toBe("Parâmetro 'content' inválido: mínimo de 1 caracteres")
-//             }
-//         }
-//     })
-
-//     //ERROS GET POST
-//     test("Erro na busca quando não for fornecido um token válido na autenticação", async () => {
-//         expect.assertions(2)
-
-//         try {
-//             const input: IGetPostsInputDTO = {
-//                 token: "token-invalido",
-//             }
-
-//             await postBusiness.getPosts(input)
-
-//         } catch (error) {
-//             if (error instanceof BaseError) {
-//                 expect(error.statusCode).toBe(401)
-//                 expect(error.message).toBe("Credenciais inválidas")
-//             }
-//         }
-//     })
-
-
-
-// })
+        } catch (error) {
+            if (error instanceof BaseError) {
+                expect(error.statusCode).toBe(409)
+                expect(error.message).toBe("Parâmetro 'produto' inválido: mínimo de 1 item")
+            }
+        }
+    })
+    
+})

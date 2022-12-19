@@ -135,11 +135,11 @@ Content-Type: application/json
   ]
 }
 
-
-
 ###
-<?xml version="1.0" encoding="UTF-8"?>
+POST http://localhost:3003/products/new/xml
+Content-Type: application/xml
 
+<?xml version="1.0" encoding="UTF-8"?>
 <products>
     <element>
         <id>8371</id>
@@ -165,12 +165,6 @@ Content-Type: application/json
 </products>
 
 
-
-
-
-
-
-
 ###
-GET http://localhost:3003/products
+GET http://localhost:3003/products?search=7518
 
