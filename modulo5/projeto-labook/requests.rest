@@ -1,0 +1,44 @@
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVhNzA0MWY0LWNiOTQtNDdlOC04ZGE2LWEyZjA1ZThhNjdiNiIsInJvbGUiOiJOT1JNQUwiLCJpYXQiOjE2NjQxNDM4NzgsImV4cCI6MTY2NDIzMDI3OH0.FQ7Ciw32msMez6s5CEy0EcMbBu5fJRsAfIeb4BCdGiE
+
+
+### Endpoint de teste
+GET http://localhost:3003/ping
+
+###
+
+//Signup
+POST http://localhost:3003/users/signup
+Content-Type: application/json
+
+{
+  "name": "Gilead",
+  "email": "gilead@gmail.com",
+  "password": "123456"
+}
+
+###
+
+//Login
+POST http://localhost:3003/users/login
+Content-Type: application/json
+
+{
+  "email": "gilead@gmail.com",
+  "password": "123456"
+}
+
+###
+
+//New Post
+POST http://localhost:3003/posts
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "content": "Teste 3"
+}
+
+###
+
+//Get Posts
+GET http://localhost:3003/posts
